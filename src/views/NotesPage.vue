@@ -176,31 +176,34 @@ export default {
         title: 'Add New Note',
         html:
           '<input id="swal-input1" class="swal2-input" placeholder="Name">' +
-          '<textarea id="swal-input2" class="swal2-textarea" placeholder="Content"></textarea>',
+          '<textarea id="swal-input2" class="swal2-textarea" placeholder="Content"></textarea>' +
+          '<input id="swal-input3" class="swal2-input" placeholder="Category">',
         focusConfirm: false,
         preConfirm: () => {
           return [
             document.getElementById('swal-input1').value,
-            document.getElementById('swal-input2').value
+            document.getElementById('swal-input2').value,
+            document.getElementById('swal-input3').value
           ]
         }
       })
 
       if (formValues) {
-        const [name, content] = formValues
-        this.addNote({ name, content })
+        const [name, content, category] = formValues
+        this.addNote({ name, content, category })
       }
     },
-    async addNote ({ name, content }) {
+
+    async addNote ({ name, content, category }) {
       try {
         const token = localStorage.getItem('token')
-        const response = await fetch('http://127.0.0.1:8000/notes', {
+        const url = `http://127.0.0.1:8000/notes?name=${encodeURIComponent(name)}&content=${encodeURIComponent(content)}&category_name=${encodeURIComponent(category)}`
+        const response = await fetch(url, {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ name, content })
+          }
         })
 
         if (response.ok) {
